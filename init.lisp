@@ -5,15 +5,23 @@
 (setf *mouse-focus-policy* :click)
 
 ;; which-key-mode is always on
+;; can't use it until https://github.com/stumpwm/stumpwm/issues/784 fixed
 ;; (add-hook *key-press-hook* 'which-key-mode-key-press-hook)
+
+(defcommand run-shell-command-and-pop (cmd)
+  ((:shell "/bin/sh -c "))
+  "Runs the comand and pops to the top menu. Useful for binding in interactive keymaps."
+  (stumpwm::run-prog *shell-program* :args (list "-c" cmd) :wait nil)
+  (pop-top-map))
 
 ;;;;;;;;;;;;;;;;;
 ;; keybindings ;;
 ;;;;;;;;;;;;;;;;;
 
 (define-key *top-map* (kbd "s-:") "colon")
-(define-key *top-map* (kbd "s-n") "next")
-(define-key *top-map* (kbd "s-p") "prev")
+(define-key *top-map* (kbd "s-!") "exec")
+(define-key *top-map* (kbd "s-n") "pull-hidden-next")
+(define-key *top-map* (kbd "s-p") "pull-hidden-previous")
 (define-key *top-map* (kbd "C-s-ESC")
   "run-shell-command systemctl suspend")
 (define-key *help-map*  (kbd "R") "loadrc")
@@ -28,27 +36,44 @@
         (define-key m (kbd "h") "move-focus left")
         (define-key m (kbd "j") "move-focus down")
         (define-key m (kbd "k") "move-focus up")
-        (define-key m (kbd "L") "exchange-direction right")
-        (define-key m (kbd "H") "exchange-direction left")
-        (define-key m (kbd "J") "exchange-direction down")
-        (define-key m (kbd "K") "exchange-direction up")
+        (define-key m (kbd "L") "move-window right")
+        (define-key m (kbd "H") "move-window left")
+        (define-key m (kbd "J") "move-window down")
+        (define-key m (kbd "K") "move-window up")
         (define-key m (kbd "m") "only")
         (define-key m (kbd "d") "remove")
         (define-key m (kbd "=") "balance-frames")
         (define-key m (kbd "e") "expose")
         (define-key m (kbd ".") "iresize")
+        (define-key m (kbd "d") "delete")
+        (define-key m (kbd "C-d") "kill")
         m))
 
+(undefine-key *root-map* (kbd "k"))
+(undefine-key *root-map* (kbd "K"))
 (define-key *root-map* (kbd "w") '*window-bindings*)
+
 (loop for n from 1 to 9
       for key = (kbd (write-to-string n))
-      for cmd =  (concatenate 'string "select-window-by-number" (write-to-string (- n 1)))
+      for cmd =  (concatenate 'string "select-window-by-number " (write-to-string (- n 1)))
       do (define-key *root-map* key cmd))
 
-(define-key *root-map* (kbd "1") "select-window-by-number 0")
-(define-key *root-map* (kbd "2") "select-window-by-number 1")
-(define-key *root-map* (kbd "3") "select-window-by-number 2")
-(define-key *root-map* (kbd "4") "select-window-by-number 3")
+;; remove when https://github.com/stumpwm/stumpwm/pull/786 merged
+(defcommand (pull-from-windowlist2 tile-group) (&optional (fmt *window-format*)) (:rest)
+    (let ((pulled-window (select-window-from-menu
+                          (group-windows (current-group))
+                          fmt)))
+      (when pulled-window
+        (pull-window pulled-window))))
+
+(defvar *buffers-bindings* nil)
+(setf *buffers-bindings*
+      (let ((m (make-sparse-keymap)))
+        (define-key m (kbd "b") "pull-from-windowlist2 %n %c")
+        (define-key m (kbd "d") "delete")
+        (define-key m (kbd "D") "kill")
+        m))
+(define-key *root-map* (kbd "b") '*buffers-bindings*)
 
 (define-remapped-keys
     '(("(Brave|Chrome|Firefox)"
@@ -88,7 +113,7 @@
 (setq *message-window-input-gravity* :bottom-right)
 (setq *message-window-input-gravity* :bottom-right)
 (setf *window-border-style* :thick)
-(set-focus-color "yellow")
+(set-focus-color "olivedrab")
 ;;;;;;;;;;;
 ;; gaps  ;;
 ;;;;;;;;;;;
@@ -168,11 +193,6 @@
     (message "Next song")
     (pop-top-map))
 
-(defcommand media-app
-    () ()
-    (run-shell-command "gpmdp")
-    (pop-top-map))
-
 (define-interactive-keymap imedia
     ()
   ((kbd "k") "volume-up")
@@ -182,7 +202,8 @@
   ((kbd "l") "media-next")
   ((kbd "s") "audio-toggle-play")
   ((kbd "SPC") "audio-toggle-play")
-  ((kbd "a") "media-app"))
+  ((kbd "a") "run-shell-command-and-pop gpmdp")
+  ((kbd "p") "run-shell-command-and-pop pavucontrol"))
 
 (undefine-key *root-map* (kbd "m"))
 (define-key *root-map* (kbd "m") "imedia")
@@ -198,7 +219,8 @@
         (define-key m (kbd "g") "browser")
         (define-key m (kbd "e") "emacs")
         (define-key m (kbd "m") "media-app")
-        (define-key m (kbd "t") "run-shell-command telegram-desktop")
+        (define-key m (kbd "t") "run-shell-command terminator")
+        (define-key m (kbd "T") "run-shell-command telegram-desktop")
         m))
 
 (define-key *root-map* (kbd "a") '*apps-bindings*)
