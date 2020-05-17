@@ -111,6 +111,7 @@
 ;; git clone git@github.com:LispLima/clx-truetype.git ~/quicklisp/local-projects/clx-truetype
 (ql:quickload "clx-truetype")
 (load-module "ttf-fonts")
+(clx-truetype:cache-fonts)
 (clx-truetype:cache-font-file "/usr/share/fonts/TTF/JetBrainsMono-Medium.ttf")
 (set-font
  (make-instance 'xft:font

@@ -1,0 +1,23 @@
+* Install stumpwm
+  - Clone
+  #+begin_src sh
+    git clone git@github.com:stumpwm/stumpwm.git ~/Sandbox/stumpwm
+  #+end_src
+  - Follow installation instructions described in https://github.com/stumpwm/stumpwm
+
+  - clx-truetype was removed from quicklisp repos, and currently this is the only way of getting ttf font
+     #+begin_src sh
+      git clone git@github.com:LispLima/clx-truetype.git ~/quicklisp/local-projects/clx-truetype
+     #+end_src
+  - Make sure all xorg dependencies, and required tools are installed
+    #+begin_src sh
+      sudo pacman -S xorg-xsetroot xorg-xinput xdotool --noconfirm
+    #+end_src
+* Create xsession file
+  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "/sudo::/usr/share/xsessions/stumpwm.desktop")
+     [Desktop Entry]
+     Name=StumpWM
+     Comment=StumpWM
+     Exec=/usr/local/bin/stumpwm
+     Type=Application
+  #+end_src
