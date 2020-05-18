@@ -14,6 +14,7 @@
   (stumpwm::run-prog *shell-program* :args (list "-c" cmd) :wait nil)
   (pop-top-map))
 
+(setf *frame-number-map* "123456789abcdefghijklmnopqrstuvwxyz")
 ;;;;;;;;;;;;;;;;;
 ;; keybindings ;;
 ;;;;;;;;;;;;;;;;;
@@ -32,6 +33,7 @@
         (define-key m (kbd "v") "hsplit")
         (define-key m (kbd "s") "vsplit")
         (define-key m (kbd "w") "other")
+        (define-key m (kbd "W") "fselect")
         (define-key m (kbd "l") "move-focus right")
         (define-key m (kbd "h") "move-focus left")
         (define-key m (kbd "j") "move-focus down")
@@ -41,21 +43,24 @@
         (define-key m (kbd "J") "move-window down")
         (define-key m (kbd "K") "move-window up")
         (define-key m (kbd "m") "only")
-        (define-key m (kbd "d") "remove")
+        (define-key m (kbd "d") "remove-split")
         (define-key m (kbd "=") "balance-frames")
         (define-key m (kbd "e") "expose")
         (define-key m (kbd ".") "iresize")
-        (define-key m (kbd "d") "delete")
-        (define-key m (kbd "C-d") "kill")
         m))
 
 (undefine-key *root-map* (kbd "k"))
 (undefine-key *root-map* (kbd "K"))
+(define-key *root-map* (kbd "h") "move-focus left")
+(define-key *root-map* (kbd "l") "move-focus right")
+(define-key *root-map* (kbd "j") "move-focus down")
+(define-key *root-map* (kbd "k") "move-focus up")
+(define-key *root-map* (kbd "H") *help-map*)
 (define-key *root-map* (kbd "w") '*window-bindings*)
 
-(loop for n from 1 to 9
+(loop for n from 0 to 9
       for key = (kbd (write-to-string n))
-      for cmd =  (concatenate 'string "select-window-by-number " (write-to-string (- n 1)))
+      for cmd = (concatenate 'string "fselect " (write-to-string n))
       do (define-key *root-map* key cmd))
 
 ;; remove when https://github.com/stumpwm/stumpwm/pull/786 merged
