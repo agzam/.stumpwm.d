@@ -11,13 +11,40 @@
      #+end_src
   - Make sure all xorg dependencies, and required tools are installed
     #+begin_src sh
-      sudo pacman -S xorg-xsetroot xorg-xinput xdotool --noconfirm
+      sudo pacman -S xorg-xsetroot xorg-xinput xdotool albert --noconfirm
     #+end_src
 * Create xsession file
   #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "/sudo::/usr/share/xsessions/stumpwm.desktop")
-     [Desktop Entry]
-     Name=StumpWM
-     Comment=StumpWM
-     Exec=/usr/local/bin/stumpwm
-     Type=Application
+    [Desktop Entry]
+    Name=StumpWM
+    Comment=StumpWM
+    Exec=sbcl --non-interactive --load /home/ag/.stumpwm.d/startstump.lisp
+    Type=Application
+  #+end_src
+* Create xinitrc
+  Something similar to:
+  #+begin_src conf :tangle (when (eq system-type 'gnu/linux) "~/.xinitrc") :tangle-mode (identity #o777)
+    #!/bin/sh
+    xsetroot -cursor_name top_left_arrow &
+    xsetroot -solid "#000000" &
+    setxkbmap -layout us,ru -option -option "grp:shifts_toggle" &
+
+    xinput --set-prop "DELL07E6:00 06CB:76AF Touchpad" "libinput Accel Speed" 0.8 &
+    xinput --set-prop "DELL07E6:00 06CB:76AF Touchpad" "libinput Natural Scrolling Enabled" 1 &
+    xinput --set-prop "DELL07E6:00 06CB:76AF Touchpad" "libinput Tapping Enabled" 1 &
+    xinput --set-prop "DELL07E6:00 06CB:76AF Touchpad" "libinput Middle Emulation Enabled" 1 &
+    xinput --set-prop "MOSART Semi. 2.4G Wireless Mouse" "libinput Natural Scrolling Enabled" 1 &
+    xinput --set-prop "Apple Inc. Magic Trackpad 2" "libinput Tapping Enabled" 1 &
+    xinput --set-prop "Apple Inc. Magic Trackpad 2" "libinput Natural Scrolling Enabled" 1 &
+    xinput --set-prop "Apple Inc. Magic Trackpad 2" "libinput Accel Speed" 0.6 &
+
+    xbindkeys &
+    xset r rate 200 60 &
+    xset r rate 200 60 &
+    if ! pidof -x "redshift" >/dev/null; then
+        redshift -l geoclue2 -t 6500:2500 &> /dev/null &
+    fi
+    albert &> /dev/null &
+    volnoti &
+    bash -c "sleep 2; xmodmap /home/ag/.Xmodmap" &
   #+end_src
