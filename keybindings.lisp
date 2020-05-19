@@ -55,22 +55,30 @@
 
 (define-remapped-keys
     '(("(Brave|Chrome|Firefox)"
+       ;; navigation Emacs-style
        ("C-n" . "Down")
        ("C-p" . "Up")
        ("C-f" . "Right")
        ("C-b" . "Left")
+
+       ;; navigation Vim-style
+       ("M-h" . "Left")
+       ("M-l" . "Right")
+       ("M-j" . "Down")
+       ("M-k" . "Up")
+
+       ;; seach
+       ("s-f" . "C-f")
+       ("s-g" . "C-g")
+       ("s-G" . "C-G")
+
+       ;; tabs
        ("s-k" . "C-Tab")
        ("s-j" . "C-S-Tab")
        ("s-w" . "C-w")
-       ("s-c" . "C-c")
-       ("s-v" . "C-v")
        ("s-t" . "C-t")
        ("s-T" . "C-T")
-       ("M-DEL" . "C-DEL")
-       ("s-=" . "C-=")
-       ("s--" . "C--")
        ("s-r" . "C-r")
-       ("s-L" . "C-l")
        ("s-0" . "C-0")
        ("s-1" . "C-1")
        ("s-2" . "C-2")
@@ -81,6 +89,18 @@
        ("s-7" . "C-7")
        ("s-8" . "C-8")
        ("s-9" . "C-9")
+
+       ;; copy-cut-paste
+       ("s-c" . "C-c")
+       ("s-x" . "C-x")
+       ("s-v" . "C-v")
+
+       ("M-DEL" . "C-DEL")
+       ("s-=" . "C-=")
+       ("s--" . "C--")
+
+       ("s-L" . "C-l") ; jump to address bar
+
        )))
 
 ;;;;;;;;;;

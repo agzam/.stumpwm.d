@@ -4,7 +4,7 @@
 (require :swank)
 (swank-loader:init)
 (unless swank::*servers*
-  (swank:create-server :port 4004
+  (swank:create-server :port 4005
                        :style swank:*communication-style*
                        :dont-close t))
 
@@ -32,3 +32,5 @@
 (ag/load "keybindings")
 (ag/load "media")
 (ag/load "visuals")
+;; (ag/load "emacs")
+
