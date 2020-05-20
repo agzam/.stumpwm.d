@@ -1,3 +1,6 @@
+(ql:quickload :arrows)
+(ql:quickload :swank)
+
 (in-package #:stumpwm)
 (run-shell-command "~/.xinitrc")
 
@@ -32,5 +35,4 @@
 (ag/load "keybindings")
 (ag/load "media")
 (ag/load "visuals")
-;; (ag/load "emacs")
-
+(ag/load "emacs")

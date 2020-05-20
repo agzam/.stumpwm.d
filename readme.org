@@ -18,7 +18,7 @@
     [Desktop Entry]
     Name=StumpWM
     Comment=StumpWM
-    Exec=sbcl --non-interactive --load /home/ag/.stumpwm.d/startstump.lisp
+    Exec=sbcl --non-interactive --load /home/ag/.stumpwm.d/start.lisp
     Type=Application
   #+end_src
 * Create xinitrc
