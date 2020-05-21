@@ -29,13 +29,17 @@
   () ()
   (run-shell-command "gpmdp"))
 
-(define-interactive-keymap imedia
-    ()
+(defcommand media-i-feel-lucky () ()
+  ;; I set a global key in my player <Ctrl+Shift+Alt F3> to 'I feel lucky' feature
+  (run-shell-command-and-pop "xdotool keydown Alt_L Shift_L Control_L key F3; sleep 2; xdotool keyup Alt_L Shift_L Control_L key F3"))
+
+(define-interactive-keymap imedia ()
   ((kbd "k") "volume-up")
   ((kbd "j") "volume-down")
   ((kbd "m") "volume-mute")
   ((kbd "h") "media-prev")
   ((kbd "l") "media-next")
+  ((kbd "I") "media-i-feel-lucky")
   ((kbd "s") "audio-toggle-play")
   ((kbd "SPC") "audio-toggle-play")
   ((kbd "a") "run-shell-command-and-pop gpmdp")

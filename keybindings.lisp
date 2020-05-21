@@ -12,6 +12,7 @@
 (setf *window-bindings*
       (let ((m (make-sparse-keymap)))
         (define-key m (kbd "v") "hsplit")
+        (define-key m (kbd "V") "hsplit")
         (define-key m (kbd "s") "vsplit")
         (define-key m (kbd "w") "other")
         (define-key m (kbd "W") "fselect")
