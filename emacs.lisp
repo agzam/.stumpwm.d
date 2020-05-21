@@ -18,9 +18,22 @@
       (setq *edit-w-mx/prev-selection* cur)
       cur)))
 
+(defun need-split-with-emacs-p (win)
+  "Returns nil if Emacs is already visible and on the same display."
+  (act-on-matching-windows (w)
+      (classed-p w "Emacs")
+      (not (within-split-p win w))))
+
+(defun show-emacs-next-to-window (win)
+  (run-commands "dump-screen-to-file .stump-before-edit")
+  (when (need-split-with-emacs-p win)
+        (hsplit))
+  (run-or-raise "emacs" '(:class "Emacs")))
+
 (defcommand edit-with-emacs (&optional dont-copy?) (:y-or-n)
   (let* ((cur-win (current-window))
          (win-class (string (slot-value cur-win 'class)))
+         (win-title (string (slot-value cur-win 'title)))
          (win-id (->
                   cur-win
                   (slot-value 'xwin)
@@ -29,14 +42,14 @@
          (cmd (ast->string `(progn
                               (load "~/.stumpwm.d/stump.el")
                               (require 'stump)
-                              (stump/edit-with-emacs ,win-id ,win-class ,dont-copy?))))
+                              (stump/edit-with-emacs ,win-id ,win-title ,win-class ,dont-copy?))))
          (selected-text (edit-w-mx/get-current-selection)))
     (unless dont-copy?
       (unless selected-text
         (stumpwm::send-fake-key cur-win (kbd "C-a")))
       (stumpwm::send-fake-key cur-win (kbd "C-c")))
     (run-shell-command (concat "emacsclient -e " cmd))
-    (run-or-raise "emacs" '(:class "Emacs"))
+    (show-emacs-next-to-window cur-win)
     (setf *edit-w-mx/prev-selection* nil)))
 
 (define-key *top-map* (kbd "C-s-o") "edit-with-emacs")
@@ -51,4 +64,5 @@
               (window-by-id))))
     (focus-window win t)
     (when succes-p
-      (send-fake-key win (kbd "C-v")))))
+      (send-fake-key win (kbd "C-v")))
+    (run-commands "restore-from-file .stump-before-edit")))

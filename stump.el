@@ -34,13 +34,15 @@
   "Hook for when edit-with-emacs buffer gets activated.
    Hook function must accept arguments:
     - buffer-name
+    - window-title
+    - window-class
     - window-id")
 
 (defun run-stump-command (cmd)
   (call-process (executable-find "stumpish") nil 0 nil cmd))
 
-(defun stump/edit-with-emacs (&optional window-id win-class dont-yank?)
-  (let* ((buf-name (concat "*edit-with-emacs " win-class "*"))
+(defun stump/edit-with-emacs (&optional window-id window-title window-class dont-yank?)
+  (let* ((buf-name (concat "*edit-with-emacs " window-class "*"))
          (buffer (get-buffer-create buf-name)))
     (unless (bound-and-true-p global-edit-with-emacs-mode)
       (global-edit-with-emacs-mode 1))
@@ -50,8 +52,8 @@
       (unless dont-yank? (clipboard-yank))
       (deactivate-mark)
       (stump/edit-with-emacs-mode 1))
-    (switch-to-buffer buffer))
-  (run-hook-with-args 'stump/edit-with-emacs-hook buf-name window-id))
+    (switch-to-buffer buffer)
+    (run-hook-with-args 'stump/edit-with-emacs-hook buf-name window-title window-class window-id)))
 
 (defun stump/finish-edit-with-emacs ()
   (interactive)
