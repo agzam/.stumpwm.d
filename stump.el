@@ -22,12 +22,28 @@
   :lighter " editwithemacs"
   :keymap stump/edit-with-emacs-mode-map)
 
+(defun stump/turn-on-edit-with-emacs-mode ()
+  "Turn on `stump/edit-with-emacs-mode' if the buffer derives from that mode"
+  (when (string-match-p "*edit-with-emacs" (buffer-name (current-buffer)))
+    (stump/edit-with-emacs-mode t)))
+
+(define-global-minor-mode global-edit-with-emacs-mode
+  stump/edit-with-emacs-mode stump/turn-on-edit-with-emacs-mode)
+
+(defvar stump/edit-with-emacs-hook nil
+  "Hook for when edit-with-emacs buffer gets activated.
+   Hook function must accept arguments:
+    - buffer-name
+    - window-id")
+
 (defun run-stump-command (cmd)
   (call-process (executable-find "stumpish") nil 0 nil cmd))
 
 (defun stump/edit-with-emacs (&optional window-id win-class dont-yank?)
   (let* ((buf-name (concat "*edit-with-emacs " win-class "*"))
          (buffer (get-buffer-create buf-name)))
+    (unless (bound-and-true-p global-edit-with-emacs-mode)
+      (global-edit-with-emacs-mode 1))
     (setq stump/previous-window-id window-id)
     (with-current-buffer buffer
       (delete-region (point-min) (point-max))
@@ -35,7 +51,7 @@
       (deactivate-mark)
       (stump/edit-with-emacs-mode 1))
     (switch-to-buffer buffer))
-  (run-hook-with-args 'stump/edit-with-emacs-hook buf-name window-id title))
+  (run-hook-with-args 'stump/edit-with-emacs-hook buf-name window-id))
 
 (defun stump/finish-edit-with-emacs ()
   (interactive)
