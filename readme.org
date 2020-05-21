@@ -47,4 +47,6 @@
     albert &> /dev/null &
     volnoti &
     bash -c "sleep 2; xmodmap /home/ag/.Xmodmap" &
+    eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
+    export SSH_AUTH_SOCK
   #+end_src

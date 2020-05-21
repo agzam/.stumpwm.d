@@ -32,7 +32,7 @@
 ;; (add-hook *key-press-hook* 'which-key-mode-key-press-hook)
 
 (ag/load "funcs")
-(ag/load "keybindings")
 (ag/load "media")
 (ag/load "visuals")
 (ag/load "emacs")
+(ag/load "keybindings")

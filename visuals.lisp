@@ -29,7 +29,7 @@
 ;; the screen border)
 (setf swm-gaps:*outer-gaps-size* 3)
 (swm-gaps:toggle-gaps-on)
-
+(import 'arrows:->>)
 ;;;;;;;;;;
 ;; font ;;
 ;;;;;;;;;;
@@ -51,16 +51,20 @@
 ;;;;;;;;;;;;
 
 (defvar xrandr-modes nil)
+;; you can generate these values using arandr
 (setf xrandr-modes
-      '((laptop . "xrandr --output VIRTUAL1 --off --output eDP1 --primary --mode 1920x1080 --pos 0x0 --rotate normal --output DP1 --off --output HDMI2 --off --output HDMI1 --off --output DP2 --off")
-        (external-home . "xrandr --output eDP1 --off --output DP2 --primary --mode 2560x1440")
-        (laptop+external-home . "xrandr --output eDP1 --mode 1920x1080 --pos 0x0 --rotate normal --output DP1 --off --output DP2 --primary --mode 2560x1440 --pos 1920x0 --rotate normal --output HDMI1 --off --output HDMI2 --off --output VIRTUAL1 --off")))
+      '((laptop . "xrandr --output DP1 --off --output eDP1 --primary")
+        (external-home . "xrandr --output eDP1 --off --output DP1 --primary")
+        (laptop+external-home . "xrandr --output eDP1 --mode 1920x1080 --pos 0x769 --rotate normal --output DP1 --primary --mode 2560x1440 --pos 1920x0 --rotate normal --output DP2 --off --output HDMI1 --off --output HDMI2 --off --output VIRTUAL1 --off")))
 
 (dotimes (i (length xrandr-modes))
-  (let ((k (kbd (concatenate
-                 'string "s-C-"
-                 (write-to-string (+ 1 i)))))
-        (cmd (concatenate
-              'string "run-shell-command "
-              (cdr (nth i xrandr-modes)))))
-    (define-key *top-map* k cmd)))
+  (let ((key (->> (+ i 1)
+                  (write-to-string)
+                  (concat "s-C-")
+                  (kbd)))
+        (cmd (->> xrandr-modes
+                  (nth i)
+                  (cdr)
+                  (concat "run-shell-command "))))
+    (undefine-key *top-map* key)
+    (define-key *top-map* key cmd)))

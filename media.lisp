@@ -25,6 +25,10 @@
   (message "Next song")
   (pop-top-map))
 
+(defcommand media-app
+  () ()
+  (run-shell-command "gpmdp"))
+
 (define-interactive-keymap imedia
     ()
   ((kbd "k") "volume-up")
