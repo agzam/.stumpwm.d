@@ -53,9 +53,9 @@
 (defvar xrandr-modes nil)
 ;; you can generate these values using arandr
 (setf xrandr-modes
-      '((laptop . "xrandr --output DP1 --off --output eDP1 --primary")
-        (external-home . "xrandr --output eDP1 --off --output DP1 --primary")
-        (laptop+external-home . "xrandr --output eDP1 --mode 1920x1080 --pos 0x769 --rotate normal --output DP1 --primary --mode 2560x1440 --pos 1920x0 --rotate normal --output DP2 --off --output HDMI1 --off --output HDMI2 --off --output VIRTUAL1 --off")))
+      '((laptop . "xrandr --output eDP1 --auto --output DP2 --off")
+        (external-home . "xrandr --output eDP1 --off --output DP2 --auto")
+        (laptop+external-home . "xrandr --output eDP1 --auto --output DP2 --right-of eDP1 --auto --primary")))
 
 (dotimes (i (length xrandr-modes))
   (let ((key (->> (+ i 1)

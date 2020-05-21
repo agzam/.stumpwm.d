@@ -12,3 +12,19 @@
          (frames (mapcar 'window-head wins)))
     (and (apply 'eq frames)
          (every 'window-visible-p wins))))
+
+(defcommand run-and-float (cmd params) ((:string) (:string))
+  "Runs shell command and immediately floats the resulting window"
+  (run-shell-command (concat cmd " " params))
+  (sleep 0.3)
+  (let ((win (car (act-on-matching-windows
+                      (w)
+                      (string-equal (slot-value w 'res) cmd)
+                      w))))
+    (float-window win (current-group))))
+
+(ql:quickload :closer-mop)
+
+(defun get-all-slot-vals (obj)
+  "Returns all slot values for a given CLOS Object"
+  (mapcar #'closer-mop:slot-definition-name (closer-mop:class-slots (class-of obj))))

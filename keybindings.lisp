@@ -6,7 +6,7 @@
 (define-key *top-map* (kbd "s-p") "pull-hidden-previous")
 (define-key *top-map* (kbd "C-s-ESC") "run-shell-command systemctl suspend")
 (define-key *help-map*  (kbd "R") "loadrc")
-(define-key *root-map*  (kbd "SPC") "run-shell-command albert show")
+(define-key *root-map*  (kbd "SPC") "run-and-float albert show")
 
 (defvar *window-bindings* nil)
 (setf *window-bindings*
