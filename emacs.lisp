@@ -8,6 +8,16 @@
   (in-package #:stumpwm)
   (string-downcase (write-to-string (write-to-string lst))))
 
+(defvar *edit-w-mx/prev-selection* nil)
+
+(defun edit-w-mx/get-current-selection ()
+  "Returns current selection, otherwise nil"
+  (let ((cur (get-x-selection nil :primary)))
+    (when (or (not cur)
+              (string-not-equal *edit-w-mx/prev-selection* cur))
+      (setq *edit-w-mx/prev-selection* cur)
+      cur)))
+
 (defcommand edit-with-emacs (&optional dont-copy?) (:y-or-n)
   (let* ((cur-win (current-window))
          (win-class (string (slot-value cur-win 'class)))
@@ -19,12 +29,15 @@
          (cmd (ast->string `(progn
                               (load "~/.stumpwm.d/stump.el")
                               (require 'stump)
-                              (stump/edit-with-emacs ,win-id ,win-class ,dont-copy?)))))
+                              (stump/edit-with-emacs ,win-id ,win-class ,dont-copy?))))
+         (selected-text (edit-w-mx/get-current-selection)))
     (unless dont-copy?
-      (stumpwm::send-fake-key cur-win (kbd "C-a"))
+      (unless selected-text
+        (stumpwm::send-fake-key cur-win (kbd "C-a")))
       (stumpwm::send-fake-key cur-win (kbd "C-c")))
     (run-shell-command (concat "emacsclient -e " cmd))
-    (run-or-raise "emacs" '(:class "Emacs"))))
+    (run-or-raise "emacs" '(:class "Emacs"))
+    (setf *edit-w-mx/prev-selection* nil)))
 
 (define-key *top-map* (kbd "C-s-o") "edit-with-emacs")
 (define-key *top-map* (kbd "C-s-O") "edit-with-emacs y")
