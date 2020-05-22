@@ -10,13 +10,19 @@
 
 (defvar *edit-w-mx/prev-selection* nil)
 
+(get-x-selection nil :clipboard)
+
+(defun on-change-selection (a b c d)
+  (setq *edit-w-mx/prev-selection* (get-x-selection nil :primary)))
+
+(add-hook *click-hook* 'on-change-selection)
+
 (defun edit-w-mx/get-current-selection ()
   "Returns current selection, otherwise nil"
   (let ((cur (get-x-selection nil :primary)))
-    (when (or (not cur)
-              (string-not-equal *edit-w-mx/prev-selection* cur))
-      (setq *edit-w-mx/prev-selection* cur)
-      cur)))
+    (if (string-equal *edit-w-mx/prev-selection* cur)
+        nil
+        cur)))
 
 (defun need-split-with-emacs-p (win)
   "Returns nil if Emacs is already visible and on the same display."
@@ -47,10 +53,10 @@
     (unless dont-copy?
       (unless selected-text
         (stumpwm::send-fake-key cur-win (kbd "C-a")))
-      (stumpwm::send-fake-key cur-win (kbd "C-c")))
+      (stumpwm::send-fake-key cur-win (kbd "C-c"))
+      (on-change-selection nil nil nil nil))
     (run-shell-command (concat "emacsclient -e " cmd))
-    (show-emacs-next-to-window cur-win)
-    (setf *edit-w-mx/prev-selection* nil)))
+    (show-emacs-next-to-window cur-win)))
 
 (define-key *top-map* (kbd "C-s-o") "edit-with-emacs")
 (define-key *top-map* (kbd "C-s-O") "edit-with-emacs y")
@@ -65,4 +71,5 @@
     (focus-window win t)
     (when succes-p
       (send-fake-key win (kbd "C-v")))
+    (setf *edit-w-mx/prev-selection* nil)
     (run-commands "restore-from-file .stump-before-edit")))
