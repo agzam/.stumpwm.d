@@ -16,7 +16,7 @@
 (defcommand run-and-float (cmd params) ((:string) (:string))
   "Runs shell command and immediately floats the resulting window"
   (run-shell-command (concat cmd " " params))
-  (sleep 0.3)
+  (sleep 0.5)
   (let ((win (car (act-on-matching-windows
                       (w)
                       (string-equal (slot-value w 'res) cmd)

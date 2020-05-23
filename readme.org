@@ -1,7 +1,9 @@
 * Install stumpwm
   - Clone
   #+begin_src sh
-    git clone git@github.com:stumpwm/stumpwm.git ~/Sandbox/stumpwm
+    git clone git@github.com:agzam/.stumpwm.d --recurse-submodules
+
+    git clone git@github.com:stumpwm/stumpwm.git ~/quicklisp/local-projects/stumpwm
   #+end_src
   - Follow installation instructions described in https://github.com/stumpwm/stumpwm
 
@@ -21,8 +23,14 @@
     Exec=sbcl --non-interactive --load /home/ag/.stumpwm.d/start.lisp
     Type=Application
   #+end_src
-* Create xinitrc
+* Create ~/.xinitrc
+  Install dependencies:
+  #+begin_src sh
+    pacman -S redshift
+    yay -S xbindkeys volnoti
+  #+end_src
   Something similar to:
+
   #+begin_src conf :tangle (when (eq system-type 'gnu/linux) "~/.xinitrc") :tangle-mode (identity #o777)
     #!/bin/sh
     xsetroot -cursor_name top_left_arrow &
@@ -47,6 +55,7 @@
     albert &> /dev/null &
     volnoti &
     bash -c "sleep 2; xmodmap /home/ag/.Xmodmap" &
+
     eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
     export SSH_AUTH_SOCK
   #+end_src

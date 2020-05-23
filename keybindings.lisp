@@ -4,7 +4,14 @@
 (define-key *top-map* (kbd "s-!") "exec")
 (define-key *top-map* (kbd "s-n") "pull-hidden-next")
 (define-key *top-map* (kbd "s-p") "pull-hidden-previous")
-(define-key *top-map* (kbd "C-s-ESC") "run-shell-command systemctl suspend")
+
+(defcommand goto-sleep () ()
+  ;; for when you undock the laptop after it goest to sleep
+  (run-shell-command (assoc-value xrandr-modes 'laptop))
+  (run-shell-command "systemctl suspend"))
+
+(define-key *top-map* (kbd "C-s-ESC") "goto-sleep")
+
 (define-key *help-map*  (kbd "R") "loadrc")
 (define-key *root-map*  (kbd "SPC") "run-and-float albert show")
 
@@ -54,69 +61,80 @@
         m))
 (define-key *root-map* (kbd "b") '*buffers-bindings*)
 
+(setq apps-commonly-remapped-keys
+      '(;; navigation Vim-style
+        ("M-h" . "Left")
+        ("M-l" . "Right")
+        ("M-j" . "Down")
+        ("M-k" . "Up")
+
+        ;; ;; navigation Emacs-style
+        ("C-n" . "Down")
+        ("C-p" . "Up")
+        ("C-f" . "Right")
+        ("C-b" . "Left")
+
+        ;; copy-cut-paste
+        ("s-c" . "C-c")
+        ("s-x" . "C-x")
+        ("s-v" . "C-v")))
+
+(setq browsers-commonly-remapped-keys
+      '(;; tabs
+        ("s-k" . "C-Tab")
+        ("s-j" . "C-S-Tab")
+        ("s-w" . "C-w")
+        ("s-t" . "C-t")
+        ("s-T" . "C-T")
+        ("s-r" . "C-r")
+
+        ("s-L" . "C-l") ; jump to address bar
+
+        ;; zoom
+        ("M-DEL" . "C-DEL")
+        ("s-=" . "C-=")
+        ("s--" . "C--")
+
+        ;; seach
+        ("s-f" . "C-f")
+        ("s-g" . "C-g")
+        ("s-G" . "C-G")
+        ))
+
+(setq firefox-remapped-keys
+      (append
+       '("(firefox)")
+       apps-commonly-remapped-keys
+       browsers-commonly-remapped-keys
+       '(;; tabs
+         ("s-0" . "M-0")
+         ("s-1" . "M-1")
+         ("s-2" . "M-2")
+         ("s-3" . "M-3")
+         ("s-4" . "M-4")
+         ("s-5" . "M-5")
+         ("s-6" . "M-6")
+         ("s-7" . "M-7")
+         ("s-8" . "M-8")
+         ("s-9" . "M-9"))))
+
 (define-remapped-keys
-    '(("(Brave|Chrome|Firefox)"
-       ;; navigation Emacs-style
-       ("C-n" . "Down")
-       ("C-p" . "Up")
-       ("C-f" . "Right")
-       ("C-b" . "Left")
-
-       ;; navigation Vim-style
-       ("M-h" . "Left")
-       ("M-l" . "Right")
-       ("M-j" . "Down")
-       ("M-k" . "Up")
-
-       ;; seach
-       ("s-f" . "C-f")
-       ("s-g" . "C-g")
-       ("s-G" . "C-G")
-
-       ;; tabs
-       ("s-k" . "C-Tab")
-       ("s-j" . "C-S-Tab")
-       ("s-w" . "C-w")
-       ("s-t" . "C-t")
-       ("s-T" . "C-T")
-       ("s-r" . "C-r")
-       ("s-0" . "C-0")
-       ("s-1" . "C-1")
-       ("s-2" . "C-2")
-       ("s-3" . "C-3")
-       ("s-4" . "C-4")
-       ("s-5" . "C-5")
-       ("s-6" . "C-6")
-       ("s-7" . "C-7")
-       ("s-8" . "C-8")
-       ("s-9" . "C-9")
-
-       ;; copy-cut-paste
-       ("s-c" . "C-c")
-       ("s-x" . "C-x")
-       ("s-v" . "C-v")
-
-       ("M-DEL" . "C-DEL")
-       ("s-=" . "C-=")
-       ("s--" . "C--")
-
-       ("s-L" . "C-l") ; jump to address bar
-
-       )))
+    `(,firefox-remapped-keys))
 
 ;;;;;;;;;;
 ;; apps ;;
 ;;;;;;;;;;
 
-(defcommand browser () () (run-or-raise "brave" '(:class "Brave-browser")))
+;; (defcommand browser () () (run-or-raise "brave" '(:class "Brave-browser")))
+(defcommand browser () () (run-or-raise "firefox" '(:class "firefox")))
+(defcommand terminal-app () () (run-or-raise "gnome-terminal" '(:class "Gnome-terminal")))
 
-(defvar *apps-bindings* nil)
 (setf *apps-bindings*
       (let ((m (make-sparse-keymap)))
         (define-key m (kbd "g") "browser")
         (define-key m (kbd "e") "emacs")
         (define-key m (kbd "m") "media-app")
-        (define-key m (kbd "t") "run-shell-command terminator")
+        (define-key m (kbd "t") "terminal-app")
         (define-key m (kbd "T") "run-shell-command telegram-desktop")
         m))
 
