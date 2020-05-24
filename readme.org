@@ -59,3 +59,7 @@
     eval $(/usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg)
     export SSH_AUTH_SOCK
   #+end_src
+* Symlink to stumpish
+  #+begin_src sh
+    sudo ln -s ~/.stumpwm.d/modules/util/stumpish/stumpish /usr/local/bin
+  #+end_src

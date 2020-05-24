@@ -33,8 +33,11 @@
 (defun show-emacs-next-to-window (win)
   (run-commands "dump-screen-to-file .stump-before-edit")
   (when (need-split-with-emacs-p win)
-        (hsplit))
-  (run-or-raise "emacs" '(:class "Emacs")))
+    (hsplit)
+    (other-window))
+  (act-on-matching-windows (w)
+      (classed-p w "Emacs")
+      (pull-window w)))
 
 (defcommand edit-with-emacs (&optional dont-copy?) (:y-or-n)
   (let* ((cur-win (current-window))
@@ -59,7 +62,7 @@
     (show-emacs-next-to-window cur-win)))
 
 (define-key *top-map* (kbd "C-s-o") "edit-with-emacs")
-(define-key *top-map* (kbd "C-s-O") "edit-with-emacs y")
+(define-key *top-map* (kbd "C-M-o") "edit-with-emacs y")
 
 (defcommand finish-edit-with-emacs
     (win-id &optional succes-p)
