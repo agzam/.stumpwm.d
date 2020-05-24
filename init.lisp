@@ -36,3 +36,4 @@
 (ag/load "visuals")
 (ag/load "emacs")
 (ag/load "keybindings")
+(ag/load "xrandr")

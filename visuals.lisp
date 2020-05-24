@@ -45,26 +45,3 @@
                 :subfamily "Regular"
                 :size 16
                 :antialias t))
-
-;;;;;;;;;;;;
-;; xrandr ;;
-;;;;;;;;;;;;
-
-(defvar xrandr-modes nil)
-;; you can generate these values using arandr
-(setf xrandr-modes
-      '((laptop . "xrandr --output eDP1 --auto --output DP2 --off")
-        (external-home . "xrandr --output eDP1 --off --output DP2 --auto")
-        (laptop+external-home . "xrandr --output eDP1 --auto --output DP2 --right-of eDP1 --auto --primary")))
-
-(dotimes (i (length xrandr-modes))
-  (let ((key (->> (+ i 1)
-                  (write-to-string)
-                  (concat "s-C-")
-                  (kbd)))
-        (cmd (->> xrandr-modes
-                  (nth i)
-                  (cdr)
-                  (concat "run-shell-command "))))
-    (undefine-key *top-map* key)
-    (define-key *top-map* key cmd)))
